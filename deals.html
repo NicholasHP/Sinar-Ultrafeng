@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <title>Deals</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .search-container {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-container input {
+      width: 50%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-container-deals {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card-deal {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card-deal:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-deal h3 {
+      margin: 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .card-deal p {
+      margin: 10px 0;
+      color: #666;
+    }
+
+    .card-deal .deal-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #007BFF;
+    }
+
+    .card-deal strong {
+      display: block;
+      margin-top: 10px;
+      color: #000;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: slide-down 0.3s ease-out;
+    }
+
+    @keyframes slide-down {
+      from {
+        transform: translateY(-30px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #333;
+      text-decoration: none;
+    }
+
+    .modal-form input,
+    .modal-form select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 10px 20px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .modal-form label {
+      margin-top: 10px;
+      display: block;
+      font-weight: bold;
+    }
+
+    .save-button,
+    .delete-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px 0 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .save-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .save-button:hover {
+      background-color: #45a049;
+    }
+
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+
+    .notification {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      font-size: 16px;
+    }
+
+    /* Floating button style */
+.floating-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-button:hover {
+  background-color: #0056b3;
+}
+  </style>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script>
+    // Fetch the data and call the showCards function
+    google.script.run.withSuccessHandler(data => {
+      window.dealsDataArray = data;
+      showDealCards(data);
+    }).getDealsData();
+
+    // Function to display deal data as cards
+    function showDealCards(dealsDataArray) {
+      const container = document.getElementById('dealCardContainer');
+      container.innerHTML = ''; // Clear any existing cards
+
+      // Create cards for each data entry
+      dealsDataArray.forEach((data, index) => {
+        const card = document.createElement('div');
+        card.className = 'card-deal';
+        card.dataset.index = index;
+
+        const dealName = document.createElement('h3');
+        dealName.className = 'deal-name';
+        dealName.textContent = data[1] || 'N/A';
+        card.appendChild(dealName);
+
+        const dealID = document.createElement('p');
+        dealID.innerHTML = '<strong>Deal ID:</strong> ' + (data[0] || 'N/A');
+        card.appendChild(dealID);
+
+        const companyID = document.createElement('p');
+        companyID.innerHTML = '<strong>Company ID:</strong> ' + (data[2] || 'N/A');
+        card.appendChild(companyID);
+
+        const consumerType = document.createElement('p');
+        consumerType.innerHTML = '<strong>Consumer Type:</strong> ' + (data[3] || 'N/A');
+        card.appendChild(consumerType);
+
+        const createDate = document.createElement('p');
+        createDate.innerHTML = '<strong>Create Date:</strong> ' + (data[4] ? moment(data[4], "DD/MM/YYYY").format('YYYY-MM-DD') : 'N/A');
+        card.appendChild(createDate);
+
+        const expectedCloseDate = document.createElement('p');
+        expectedCloseDate.innerHTML = '<strong>Expected Close Date:</strong> ' + (data[5] ? moment(data[5], "DD/MM/YYYY").format('YYYY-MM-DD') : 'N/A');
+        card.appendChild(expectedCloseDate);
+
+        const closeDate = document.createElement('p');
+        closeDate.innerHTML = '<strong>Close Date:</strong> ' + (data[6] ? moment(data[6], "DD/MM/YYYY").format('YYYY-MM-DD') : 'N/A');
+        card.appendChild(closeDate);
+
+        const amount = document.createElement('p');
+        amount.innerHTML = '<strong>Amount:</strong> ' + (data[7] || 'N/A');
+        card.appendChild(amount);
+
+        const stage = document.createElement('p');
+        stage.innerHTML = '<strong>Stage:</strong> ' + (data[8] || 'N/A');
+        card.appendChild(stage);
+
+        // Add click event to card to open the modal and populate the form
+        card.addEventListener('click', () => {
+          openDealsEditModal(data, index);
+        });
+
+        // Append card to container
+        container.appendChild(card);
+      });
+    }
+
+    // Function to filter deal cards based on search query
+    function searchDealCards() {
+      const query = document.getElementById('dealsSearchBar').value.toLowerCase();
+      const dealsFilteredData = window.dealsDataArray.filter(data => 
+        data[1].toLowerCase().includes(query)           // Deal Name
+      );
+      showDealCards(dealsFilteredData);
+    }
+
+ // Function to enable or disable form fields based on the stage value
+  function setFieldsEditable(isEditable) {
+    const fields = document.querySelectorAll('.modal-form input, .modal-form select');
+    fields.forEach(field => {
+      field.disabled = !isEditable;
+    });
+  }
+
+  // Function to show or hide the save button based on the stage value
+  function toggleSaveButton(isVisible) {
+    const saveButton = document.querySelector('.save-button');
+    if (saveButton) {
+      saveButton.style.display = isVisible ? 'inline-block' : 'none';
+    }
+  }
+
+ // Function to open the modal and populate the form with deal data
+function openDealsEditModal(data, index) {
+  document.getElementById('deal-id').value = data[0] || '';
+  document.getElementById('deal-name').value = data[1] || '';
+  document.getElementById('company-id').value = data[2] || '';
+  document.getElementById('employee-id').value = data[9] || '';
+  document.getElementById('consumer-type').value = data[3] || '';
+  document.getElementById('create-date').value = data[4] ? moment(data[4], "DD/MM/YYYY").format('YYYY-MM-DD') : '';
+  document.getElementById('expected-close-date').value = data[5] ? moment(data[5], "DD/MM/YYYY").format('YYYY-MM-DD') : '';
+  document.getElementById('close-date').value = data[6] ? moment(data[6], "DD/MM/YYYY").format('YYYY-MM-DD') : '';
+  document.getElementById('amount').value = data[7] || '';
+  document.getElementById('stage').value = data[8] || '';
+  document.getElementById('dealsModalIndex').value = index;
+
+  // Disable fields and show/hide buttons based on the stage
+  const isEditable = data[8] !== 'Declined' && data[8] !== 'Accepted';
+  setFieldsEditable(isEditable);
+  toggleSaveButton(isEditable);
+
+  const modal = document.getElementById('dealModal');
+  modal.style.display = 'block';
+}
+
+// // Function to close the modal
+// function closeDealsEditModal() {
+//   const modal = document.getElementById('dealModal');
+//   modal.style.display = 'none';
+// }
+
+// // Ensure close modal on clicking outside the modal content
+// window.onclick = function (event) {
+//   const modal = document.getElementById('dealModal');
+//   if (event.target == modal) {
+//     closeDealsEditModal();
+//   }
+// }
+
+  </script>
+</head>
+
+<body>
+  <h1>Deals</h1>
+  <div class="search-container">
+    <input type="text" id="dealsSearchBar" placeholder="Search deals by name..." onkeyup="searchDealCards()">
+  </div>
+  <div id="dealCardContainer" class="card-container-deals"></div>
+
+    <!-- Floating action button -->
+  <button class="floating-button" id="addDealButton">
+    <i>+</i>
+  </button>
+
+  <!-- Deal Edit Modal -->
+  <div id="dealModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeDealsEditModal()">&times;</span>
+      <h2>Edit Deal</h2>
+      <div class="modal-form">
+        <label for="deal-id">Deal ID:</label>
+        <input type="text" id="deal-id" readonly>
+        <label for="deal-name">Deal Name:</label>
+        <input type="text" id="deal-name">
+        <label for="company-id">Company ID:</label>
+        <input type="text" id="company-id">
+        <label for="employee-id">Employee ID:</label>
+        <input type="text" id="employee-id">
+        <label for="consumer-type">Consumer Type:</label>
+        <select id="consumer-type">
+          <option value="B2B">B2B</option>
+          <option value="B2C">B2C</option>
+          <option value="Non Profit">Non Profit</option>
+          <option value="Government">Government</option>
+        </select>
+        <label for="create-date">Create Date:</label>
+        <input type="date" id="create-date">
+        <label for="expected-close-date">Expected Close Date:</label>
+        <input type="date" id="expected-close-date">
+        <label for="close-date">Close Date:</label>
+        <input type="date" id="close-date">
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount">
+        <label for="stage">Stage:</label>
+        <select id="stage">
+          <option value="Created">Created</option>
+          <option value="First Contact">First Contact</option>
+          <option value="Follow Up Contact">Follow Up Contact</option>
+          <option value="Meeting Held">Meeting Held</option>
+          <option value="Declined">Declined</option>
+          <option value="Accepted">Accepted</option>
+        </select>
+        <input type="hidden" id="dealsModalIndex">
+        <button class="save-button" onclick="saveDealsData()">Save</button>
+        <button class="delete-button" onclick="deleteDealsData()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification" class="notification"></div>
+    <script>
+    // Add your existing JavaScript functions here
+
+    // Add click event listener to the floating button
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('addDealButton').addEventListener('click', () => {
+    openPage('addNewDeal');
+
+  });
+});
+
+  </script>
+</body>
+
+</html>
