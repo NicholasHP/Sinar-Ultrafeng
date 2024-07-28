@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+   @font-face {
+      font-family: myFirstFont;
+      src: url(sansation_light.woff);
+   }
+
+   body 
+   {
+      background-color: #E8F5E9;
+   }
+
+   * 
+   {
+      font-family: myFirstFont;
+   }
+
+   .center 
+   {
+      margin: auto;
+      width: 60%;
+      padding: 5px;
+   }
+
+   * 
+   {
+      user-select: none;
+   }
+
+   *::selection {
+      background: gainsboro;
+   }
+
+   *::-moz-selection {
+      background: color w3-bar-block;
+   }
+
+   fieldset {
+      border-radius: 15px;
+      border: 1px solid rgba(152, 228, 228, 0.5);
+      width: 90%;
+      max-width: 400px;
+      margin: 40px auto;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); /* Safari support */
+   }
+
+   legend {
+      color: rgb(170, 239, 239);
+   }
+
+  
+   input[type="text"],
+   input[type="password"] {
+      animation: fadeIn 1s ease;
+   }
+
+   input[type="submit"] {
+      animation: slideIn 1s ease;
+   }
+
+   @keyframes fadeIn {
+      from {
+         opacity: 0;
+      }
+      to {
+         opacity: 1;
+      }
+   }
+
+   @keyframes slideIn {
+      from {
+         transform: translateY(100%);
+      }
+      to {
+         transform: translateY(0);
+      }
+   }
+
+   .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+   }
+
+   .pagination-item {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin: 0 5px;
+      background-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1), -5px -5px 10px rgba(255, 255, 255, 0.7);
+   }
+
+   .pagination-item.active {
+      background-color: #fff;
+      box-shadow: none;
+   }
+
+   .social-media-icons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+   }
+
+   .social-media-icons img {
+      width: 30px;
+      margin: 0 5px;
+   }
+  </style>
+</head>
+<body>
+
+<fieldset class="w3-border-teal w3-small">
+  <legend><i><h1></h1></i></legend>
+  <br>
+  <?var url = getUrl();?>
+  <form method="post" action="<?= url ?>">
+    <div class="w3-row center">
+      <label><h6>Enter Username:</h6></label>
+      <input type="text" placeholder="Username" class="w3-input w3-col s12 w3-center w3-border-green  w3-animate-left" name="username" required>
+    </div>
+    <div class="w3-row center">
+      <label><h6>Enter Password:</h6></label>
+      <input type="password" name="password" class="w3-input w3-col s12 w3-center w3-border-green w3-animate-right" placeholder="Password" required>
+    </div>
+    <div class="w3-row center">
+      <input type="submit" value="Login" name="LoginButton" class="w3-input w3-hover-red w3-col s12 w3-teal w3-animate-bottom">
+    </div>
+    <div class="center w3-center w3-animate-top"><?= message ?></div>
+    <hr>
+  </form>
+ 
+</fieldset>
+
+</body>
+</html>
+
+
+<!-- Internet -->
+<style>
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: #E3F2FD;
+}
+.popup {
+  position: absolute;
+  left: 50%;
+  top: -25%;
+  visibility: hidden;
+  width: 490px;
+  border-radius: 5px;
+  padding: 13px 17px 20px;
+  background: #fff;
+  display: flex;
+  border-top: 3px solid #EA4D67;
+  transform: translateX(-50%);
+  box-shadow: 0 10px 25px rgba(52,87,220,0.1);
+  transition: all 0.25s ease;
+}
+.popup.show {
+  top: 0;
+  visibility: visible;
+}
+.popup.online {
+  border-color: #2ECC71;
+}
+.popup .icon i {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  color: #fff;
+  margin-right: 15px;
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #EA4D67;
+}
+.popup.online .icon i {
+  background: #2ECC71;
+}
+.popup .title {
+  font-size: 1.2rem;
+}
+.popup .desc {
+  color: #474747;
+  margin: 3px 0 10px;
+  font-size: 1.04rem;
+}
+.popup .reconnect {
+  border: none;
+  outline: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 8px 13px;
+  border-radius: 4px;
+  background: #5372F0;
+}
+.popup.online .reconnect {
+  background: #bfbfbf;
+  pointer-events: none;
+}
+
+  .w3-border-teal {
+    padding: 20px; /* Adjust the padding value as needed */
+  }
+.w3-row center{
+  padding:5 px 5 px;
+}
+
+@media screen and (max-width: 550px) {
+  .popup {
+    width: 100%;
+    padding: 10px 15px 17px;
+  }
+}
+</style>
+
+
+
+
+
+
+
+
+
