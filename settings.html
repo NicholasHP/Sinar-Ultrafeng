@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      .profile-box {
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .profile-box img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-right: 20px;
+      }
+      .profile-details {
+        flex: 1;
+      }
+      .profile-details h3 {
+        margin-top: 0;
+      }
+      .edit-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+      }
+      .settings-box button {
+        width: 50%; /* Set desired width */
+        margin: 10px auto; /* Center buttons */
+        display: block;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+      }
+      .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      input[readonly] {
+        background-color: #e0e0e0; /* Darker background color */
+        cursor: not-allowed; /* Change cursor to indicate non-editable */
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="w3-container">
+      <h1>Settings</h1>
+    </header>
+
+    <div class="profile-box">
+      <img src="https://via.placeholder.com/150" alt="Profile Picture">
+      <div class="profile-details">
+        <h3 id="profile-name"><?= message ?></h3>
+        <p id="profile-username"><?= username ?></p>
+        <p id="profile-email"><?= email ?></p>
+        <p id="profile-phone"><?= contact ?></p>
+      </div>
+      <span class="edit-icon" onclick="openModal()">✏️</span>
+    </div>
+
+    <div class="settings-box">
+      <button class="w3-button w3-black">Dashboard Customization</button>
+      <button id="admin" class="w3-button w3-black" style="display:none;">Manage Employees</button>
+      <button class="w3-button w3-black">Notifications</button>
+      <button class="w3-button w3-black">Delete Account</button>
+    </div>
+
+    <div id="profileModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Edit Profile</h3>
+        <form id="profileForm">
+          <label for="profile-picture">Profile Picture:</label>
+          <input class="w3-input w3-border" type="file" id="profile-picture" name="profile-picture">
+          
+          <label for="name">Name:</label>
+          <input class="w3-input w3-border" type="text" id="name" name="name" value="<?= message ?>">
+
+          <label for="password">Password:</label>
+          <div class="password-wrapper">
+            <input class="w3-input w3-border" type="password" id="password" name="password" value="<?= password ?>">
+            <i class="fa fa-eye toggle-password" onclick="togglePassword()"></i>
+          </div>
+          
+          <label for="username">Username:</label>
+          <input class="w3-input w3-border" type="text" id="username" name="username" value="<?= username ?>" readonly>
+          
+          <label for="email">Email:</label>
+          <input class="w3-input w3-border" type="email" id="email" name="email" value="<?= email ?>">
+          
+          <label for="phone">Phone Number:</label>
+          <input class="w3-input w3-border" type="tel" id="phone" name="phone" value="<?= contact ?>">
+          
+          <button class="w3-button w3-green w3-margin-top" type="button" onclick="saveProfile()">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      let initialFormValues = {};
+
+      function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = document.querySelector('.toggle-password');
+        
+        if (passwordField.type === 'password') {
+          passwordField.type = 'text';
+          toggleIcon.classList.remove('fa-eye');
+          toggleIcon.classList.add('fa-eye-slash');
+        } else {
+          passwordField.type = 'password';
+          toggleIcon.classList.remove('fa-eye-slash');
+          toggleIcon.classList.add('fa-eye');
+        }
+      }
+
+      function openModal() {
+        const form = document.getElementById('profileForm');
+        const formData = new FormData(form);
+
+        initialFormValues = {};
+        formData.forEach((value, key) => {
+          initialFormValues[key] = value;
+        });
+
+        document.getElementById('profileModal').style.display = 'block';
+      }
+
+      function closeModal() {
+        const form = document.getElementById('profileForm');
+        
+        Object.keys(initialFormValues).forEach(key => {
+          const field = form.elements[key];
+          if (field && field.type !== 'file') {  // Exclude file input fields
+            field.value = initialFormValues[key];
+          }
+        });
+
+        document.getElementById('profileModal').style.display = 'none';
+      }
+
+      function saveProfile() {
+        const name = document.getElementById('name').value;
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const password = document.getElementById('password').value;
+        
+        document.getElementById('profile-name').innerText = name;
+        document.getElementById('profile-username').innerText = username;
+        document.getElementById('profile-email').innerText = email;
+        document.getElementById('profile-phone').innerText = phone;
+
+        // Update initialFormValues with the new values
+        initialFormValues['name'] = name;
+        initialFormValues['username'] = username;
+        initialFormValues['email'] = email;
+        initialFormValues['phone'] = phone;
+        initialFormValues['password'] = password;
+
+        // Handle profile picture change if necessary
+        google.script.run.updateUserProfile(name, username, email, phone, password);
+        
+        closeModal();
+      }
+
+      function showButtonBasedOnRole() {
+        if (<?= username ?> === 'admin') {
+          document.getElementById('admin').style.display = 'block';
+        }
+      }
+
+      // Call the function when the page loads
+      window.onload = function() {
+        showButtonBasedOnRole();
+      };
+    </script>
+  </body>
+</html>
