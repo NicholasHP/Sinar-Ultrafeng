@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <title>Companies Data</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .search-container {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-container input {
+      width: 50%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .card img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin: 0 auto;
+    }
+
+    .card h3 {
+      margin: 10px 0 5px;
+      color: #333;
+    }
+
+    .card p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .card strong {
+      display: block;
+      margin-top: 10px;
+      color: #000;
+    }
+  </style>
+  <!-- INCLUDE REQUIRED EXTERNAL JAVASCRIPT LIBRARIES -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script>
+    // Fetch the data and call the showCards function
+        google.script.run.withSuccessHandler(data => {
+            window.dataArray = data;
+            showCards(data);
+        }).getCompaniesData();
+
+        // Function to display data as cards
+        function showCards(dataArray) {
+            const container = document.getElementById('companiesCardContainer');
+            container.innerHTML = ''; // Clear any existing cards
+
+            // Create cards for each data entry
+            dataArray.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                // card.setAttribute('companyID', data[0]);
+
+                const img = document.createElement('img');
+                img.src = data[5] || 'https://via.placeholder.com/100';
+                img.alt = data[2] || 'No Title';
+                card.appendChild(img);
+
+                const title = document.createElement('h3');
+                title.textContent = data[2] || 'No Name/Organization';
+                card.appendChild(title);
+
+                const id = document.createElement('p');
+                id.textContent = 'Company ID: ' + (data[0] || 'N/A');
+                card.appendChild(id);
+
+                const domain = document.createElement('p');
+                domain.textContent = 'Domain: ' + (data[1] || 'N/A');
+                card.appendChild(domain);
+
+                const phone = document.createElement('p');
+                phone.textContent = 'Phone Numbers: ' + (data[3] || 'N/A');
+                card.appendChild(phone);
+
+                const email = document.createElement('p');
+                email.textContent = 'Emails: ' + (data[4] || 'N/A');
+                card.appendChild(email);
+
+                // Add click event listener to show an alert with companyID
+                card.addEventListener('click', () => {
+
+                // alert('Company ID 2: ' + data[0]);
+
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // Function to filter cards based on search query
+        function searchCards() {
+            const query = document.getElementById('companiesSearchBar').value.toLowerCase();
+            const filteredData = window.dataArray.filter(data => 
+                data[2].toLowerCase().includes(query)
+            );
+            showCards(filteredData);
+        }
+  </script>
+</head>
+
+<body>
+  <h1>Companies Data</h1>
+  <div class="search-container">
+    <input type="text" id="companiesSearchBar" placeholder="Search companies..." onkeyup="searchCards()">
+  </div>
+  <div class="card-container" id="companiesCardContainer">
+    <!-- Cards will be dynamically inserted here -->
+  </div>
+</body>
+
+</html>
