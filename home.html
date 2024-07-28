@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    .neumorphism-effect {
+      background: #f3f5f9;
+      box-shadow: 20px 15px 30px #cfd6e6, -10px -10px 20px #ffffff;
+    }
+
+    .rounded-corners {
+      border-radius: 20px;
+    }
+
+    .main-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .main-card .heading {
+      padding: 10px;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .main-card .card-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .main-card .card {
+      flex: 1;
+      margin: 10px;
+    }
+
+    .charts-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .charts-container .chart, .charts-container .activity-tracking {
+      flex: 1;
+      margin: 0 10px;
+      padding: 20px;
+    }
+
+    .activity-tracking .cardHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .activity-tracking table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .activity-tracking table thead tr {
+      background-color: #f3f5f9;
+      text-align: left;
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .activity-tracking table th, .activity-tracking table td {
+      padding: 12px 15px;
+    }
+
+    .activity-tracking table tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    .activity-tracking table tbody tr:nth-of-type(even) {
+      background-color: #f3f5f9;
+    }
+
+    .activity-tracking table tbody tr:last-of-type {
+      border-bottom: 2px solid #f3f5f9;
+    }
+
+    .activity-tracking .status {
+      padding: 5px 10px;
+      border-radius: 5px;
+      text-align: center;
+      color: white;
+    }
+
+    .activity-tracking .status.delivered {
+      background-color: #4caf50;
+    }
+
+    .activity-tracking .status.pending {
+      background-color: #f9a825;
+    }
+
+    .activity-tracking .status.return {
+      background-color: #e53935;
+    }
+
+    .activity-tracking .status.inProgress {
+      background-color: #039be5;
+    }
+  </style>
+</head>
+<body>
+
+<header class="w3-container" style="padding-top: 22px">
+  <h3><b>Al Kabir Educational Institution</b></h3>
+</header>
+
+<center>
+  <div class="w3-container">
+    <input class="w3-input w3-border w3-round-large" type="text" placeholder="Search..." style="width: 50%; margin-bottom: 20px;">
+    
+    <div style="display: flex; justify-content: space-between;">
+      <div class="w3-card-4 w3-white neumorphism-effect rounded-corners w3-padding main-card" style="flex: 1; margin-right: 10px;">
+        <div class="heading">Overall Analytics</div>
+        <div class="card-container">
+          <div class="w3-quarter card w3-container w3-red w3-padding-16 neumorphism-effect rounded-corners">
+            <h4>Total Sales</h4>
+            <p>$120,000</p>
+          </div>
+          <div class="w3-quarter card w3-container w3-blue w3-padding-16 neumorphism-effect rounded-corners">
+            <h4>Conversion Rate</h4>
+            <p>25%</p>
+          </div>
+          <div class="w3-quarter card w3-container w3-teal w3-padding-16 neumorphism-effect rounded-corners">
+            <h4>Sales Won</h4>
+            <p>30</p>
+          </div>
+          <div class="w3-quarter card w3-container w3-orange w3-padding-16 neumorphism-effect rounded-corners">
+            <h4>Length Time</h4>
+            <p>45 days</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="w3-card-4 w3-white neumorphism-effect rounded-corners activity-tracking" style="flex: 1; margin-left: 10px;">
+        <div class="cardHeader">
+          <h2>Activity Tracking / Recent Updates</h2>
+          <a href="#" class="btn">View All</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <td>Log Time</td>
+              <td>Deal Name</td>
+              <td>Handled By</td>
+              <td>Status</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2024-07-20 10:00 AM</td>
+              <td>Deal A</td>
+              <td>John Doe</td>
+              <td><span class="status delivered">Completed</span></td>
+            </tr>
+            <tr>
+              <td>2024-07-20 11:00 AM</td>
+              <td>Deal B</td>
+              <td>Jane Smith</td>
+              <td><span class="status pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>2024-07-20 12:00 PM</td>
+              <td>Deal C</td>
+              <td>Mike Johnson</td>
+              <td><span class="status inProgress">In Progress</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="charts-container" style="margin-top: 20px;">
+      <div class="chart w3-card-4 w3-white neumorphism-effect rounded-corners">
+        <h5>Bar Chart</h5>
+        <canvas id="barChart"></canvas>
+      </div>
+      <div class="chart w3-card-4 w3-white neumorphism-effect rounded-corners">
+        <h5>Another Chart</h5>
+        <canvas id="anotherChart"></canvas>
+      </div>
+    </div>
+  </div>
+</center>
+
+<div class="w3-container w3-dark-grey w3-padding-32">
+  <div class="w3-row">
+    <div class="w3-container w3-third">
+      <h5 class="w3-bottombar">Classes</h5>
+      <p>9th Class</p>
+      <p>10th Class</p>
+      <p>11th Class</p>
+      <p>12th Class</p>
+    </div>
+    <div class="w3-container w3-third">
+      <h5 class="w3-bottombar">System</h5>
+      <p>Browser</p>
+      <p>OS</p>
+    </div>
+    <div class="w3-container w3-third">
+      <h5 class="w3-bottombar">Educational Institution</h5>
+      <p>Al Kabir Educational Institution</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Dummy bar chart data
+  const ctx = document.getElementById('barChart').getContext('2d');
+  const barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Total Sales', 'Conversion Rate', 'Sales Won', 'Length Time'],
+      datasets: [{
+        label: 'Metrics',
+        data: [120000, 25, 30, 45],
+        backgroundColor: ['#f44336', '#2196F3', '#009688', '#FF9800'],
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Dummy another chart data
+  const ctx2 = document.getElementById('anotherChart').getContext('2d');
+  const anotherChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+      datasets: [{
+        label: 'Sales',
+        data: [10, 20, 30, 40, 50, 60],
+        backgroundColor: '#009688',
+        borderColor: '#009688',
+        fill: false,
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
