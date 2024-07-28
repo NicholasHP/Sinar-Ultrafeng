@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <!-- W3.CSS for styling -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- jQuery and DataTables -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+      position: relative; /* Position for sorting icons */
+    }
+    th.sortable {
+      cursor: pointer;
+    }
+    .fa {
+      cursor: pointer;
+    }
+    #searchContainer {
+      margin-left: 10px;
+      margin-bottom: 20px;
+      position: relative; /* Position for search icon */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #searchField {
+      padding-left: 25px; /* Space for search icon */
+      flex-grow: 1;
+      width: 400px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  </style>
+</head>
+<body>
+  <div class="w3-container">
+    <h2>Leaderboard</h2>
+    <div id="searchContainer">
+      <i class="fa fa-search search-icon"></i>
+      <input type="text" id="searchField" class="w3-input" placeholder="Search by Name...">
+    </div>
+    <table id="leaderboardTable" class="w3-table w3-striped">
+      <thead>
+        <tr>
+          <th class="sortable">Ranking <i class="fa fa-sort"></i></th>
+          <th class="sortable">User ID <i class="fa fa-sort"></i></th>
+          <th class="sortable">Name <i class="fa fa-sort"></i></th>
+          <th class="sortable">Created <i class="fa fa-sort"></i></th>
+          <th class="sortable">First Contact <i class="fa fa-sort"></i></th>
+          <th class="sortable">Follow-Up Contact <i class="fa fa-sort"></i></th>
+          <th class="sortable">Meeting Held <i class="fa fa-sort"></i></th>
+          <th class="sortable">Rejected <i class="fa fa-sort"></i></th>
+          <th class="sortable">Accepted <i class="fa fa-sort"></i></th>
+          <th class="sortable">Total Number of Deals <i class="fa fa-sort"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    var table;
+
+    function createTable(dataArray) {
+      const tableBody = document.querySelector("#leaderboardTable tbody");
+      tableBody.innerHTML = "";
+
+      dataArray.forEach(row => {
+        const tableRow = document.createElement("tr");
+        
+        row.forEach((cell) => {
+          const tableCell = document.createElement("td");
+          tableCell.textContent = cell;
+          tableRow.appendChild(tableCell);
+        });
+
+        tableBody.appendChild(tableRow);
+      });
+
+      if ($.fn.DataTable.isDataTable('#leaderboardTable')) {
+        table.destroy();
+      }
+      
+      table = $('#leaderboardTable').DataTable({
+        paging: true,
+        searching: false, // Disable default search to use custom search
+        ordering: true,
+        order: [[0, 'asc']], // Default sorting (Ranking ascending)
+        columnDefs: [
+          { orderable: false, targets: [-2, -1] } // Disable ordering for non-sortable columns
+        ]
+      });
+    }
+
+    function fetchLeaderboardData() {
+      google.script.run.withSuccessHandler(function(data) {
+        createTable(data);
+        // Custom search functionality
+        document.getElementById('searchField').addEventListener('keyup', function() {
+          console.log('Search event triggered');
+          console.log('Search value:', this.value);
+          table.column(2).search(this.value).draw(); // Search in the Name column (index 2)
+        });
+      }).getLeaderboard_Data();
+    }
+
+    $(document).ready(function() {
+      $('#leaderboardTable').on('click', 'th.sortable', function() {
+        const index = $(this).index();
+        const order = table.order()[0];
+
+        if (order[0] === index) {
+          table.order([index, order[1] === 'asc' ? 'desc' : 'asc']).draw();
+        } else {
+          table.order([index, 'asc']).draw();
+        }
+      });
+
+      fetchLeaderboardData(); // Fetch data when document is ready
+    });
+  </script>
+</body>
+</html>
