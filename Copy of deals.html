@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <!-- W3.CSS for styling -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+  
+  <!-- jQuery (required for DataTables) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
+
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+      position: relative; /* Position for sorting icons */
+    }
+    th.sortable {
+      cursor: pointer;
+    }
+    .fa {
+      cursor: pointer;
+    }
+    #searchContainer {
+      margin-left: 10px;
+      margin-bottom: 20px;
+      position: relative; /* Position for search icon */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #searchField {
+      padding-left: 25px; /* Space for search icon */
+      flex-grow: 1;
+      width: 400px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .add-deal-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .add-deal-button:hover {
+      background-color: #45a049;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="w3-container">
+    <h2>Deals Data</h2>
+    <div id="searchContainer">
+      <i class="fa fa-search search-icon"></i>
+      <input type="text" id="searchField" class="w3-input" placeholder="Search...">
+      <button class="add-deal-button" onclick="openModal()">Add Deal</button>
+    </div>
+    <table id="dealsTable" class="w3-table w3-striped">
+      <thead>
+        <tr>
+          <th class="sortable">Deal ID <i class="fa fa-sort"></i></th>
+          <th class="sortable">Company <i class="fa fa-sort"></i></th>
+          <th class="sortable">Point of Contact <i class="fa fa-sort"></i></th>
+          <th class="sortable">Consumer Type <i class="fa fa-sort"></i></th>
+          <th class="sortable">Creation Date <i class="fa fa-sort"></i></th>
+          <th class="sortable">Close Date <i class="fa fa-sort"></i></th>
+          <th class="sortable">Amount <i class="fa fa-sort"></i></th>
+          <th class="sortable">Status <i class="fa fa-sort"></i></th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- The Modal -->
+  <div id="dealModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Add New Deal</h2>
+      <form id="dealForm">
+        <label for="dealID">Deal ID:</label><br>
+        <input type="text" id="dealID" name="dealID" required><br><br>
+        <label for="company">Company:</label><br>
+        <input type="text" id="company" name="company" required><br><br>
+        <label for="contact">Point of Contact:</label><br>
+        <input type="text" id="contact" name="contact" required><br><br>
+        <label for="consumerType">Consumer Type:</label><br>
+        <input type="text" id="consumerType" name="consumerType" required><br><br>
+        <label for="creationDate">Creation Date:</label><br>
+        <input type="date" id="creationDate" name="creationDate" required><br><br>
+        <label for="closeDate">Close Date:</label><br>
+        <input type="date" id="closeDate" name="closeDate"><br><br>
+        <label for="amount">Amount:</label><br>
+        <input type="number" id="amount" name="amount" min="0"><br><br>
+        <label for="status">Status:</label><br>
+        <input type="text" id="status" name="status" required><br><br>
+        <input type="button" value="Submit" onclick="submitDeal()">
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let table; // Variable to store DataTable instance
+
+    function createTable(dataArray) {
+      const tableBody = document.querySelector("#dealsTable tbody");
+      tableBody.innerHTML = "";
+
+      dataArray.forEach(row => {
+        const tableRow = document.createElement("tr");
+        
+        row.forEach((cell, index) => {
+          const tableCell = document.createElement("td");
+          tableCell.textContent = cell;
+          tableRow.appendChild(tableCell);
+        });
+
+        const editCell = document.createElement("td");
+        const editIcon = document.createElement("i");
+        editIcon.className = "fa fa-pen-to-square";
+        editIcon.title = "Edit";
+        editIcon.onclick = function() { editData(this); };
+        editCell.appendChild(editIcon);
+        tableRow.appendChild(editCell);
+
+        const deleteCell = document.createElement("td");
+        const deleteIcon = document.createElement("i");
+        deleteIcon.className = "fa fa-trash";
+        deleteIcon.title = "Delete";
+        deleteIcon.onclick = function() { deleteData(this); };
+        deleteCell.appendChild(deleteIcon);
+        tableRow.appendChild(deleteCell);
+
+        tableBody.appendChild(tableRow);
+      });
+
+      if ($.fn.DataTable.isDataTable('#dealsTable')) {
+        table.destroy();
+      }
+      
+      table = $('#dealsTable').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        columnDefs: [
+          { orderable: false, targets: [-2, -1] }
+        ]
+      });
+    }
+
+    function fetchDealsData() {
+      google.script.run.withSuccessHandler(createTable).getDeals_Data();
+    }
+
+    function filterTable() {
+      const searchValue = document.getElementById("searchField").value;
+      table.search(searchValue).draw();
+    }
+
+    function openModal() {
+      document.getElementById("dealModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("dealModal").style.display = "none";
+    }
+
+    function submitDeal() {
+      // Gather form data
+      const formData = {
+        dealID: document.getElementById("dealID").value,
+        company: document.getElementById("company").value,
+        contact: document.getElementById("contact").value,
+        consumerType: document.getElementById("consumerType").value,
+        creationDate: document.getElementById("creationDate").value,
+        closeDate: document.getElementById("closeDate").value,
+        amount: document.getElementById("amount").value,
+        status: document.getElementById("status").value
+      };
+
+      // You would typically send this data to your server or Google Script here
+      console.log("Submitted deal:", formData);
+
+      // Close the modal and reset the form
+      closeModal();
+      document.getElementById("dealForm").reset();
+
+      // Refresh the table to include the new deal (if applicable)
+      fetchDealsData();
+    }
+
+    document.getElementById("searchField").addEventListener("keyup", filterTable);
+
+    $(document).ready(function() {
+      $('#dealsTable').on('click', 'th.sortable', function() {
+        const index = $(this).index();
+        const order = table.order()[0];
+
+        if (order[0] === index) {
+          table.order([index, order[1] === 'asc' ? 'desc' : 'asc']).draw();
+        } else {
+          table.order([index, 'asc']).draw();
+        }
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", fetchDealsData);
+  </script>
+</body>
+</html>
