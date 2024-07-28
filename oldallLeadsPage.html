@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Leads</h1>
+  <div id="leadData"></div>
+  <script>
+    function displayAllLeads(response) {
+      if (response.status === "success") {
+        let data = response.data;
+        let leadDataDiv = document.getElementById('leadData');
+        let html = "<table><tr>";
+        
+        // Add headers
+        data[0].forEach(header => {
+          html += `<th>${header}</th>`;
+        });
+        html += "</tr>";
+        
+        // Add rows
+        for (let i = 1; i < data.length; i++) {
+          html += "<tr>";
+          data[i].forEach(cell => {
+            html += `<td>${cell}</td>`;
+          });
+          html += "</tr>";
+        }
+        
+        html += "</table>";
+        leadDataDiv.innerHTML = html;
+      } else {
+        document.getElementById('leadData').innerText = response.message;
+      }
+    }
+
+    // Fetch and display all leads
+    google.script.run.withSuccessHandler(displayAllLeads).getAllLeads();
+  </script>
+</body>
+</html>
