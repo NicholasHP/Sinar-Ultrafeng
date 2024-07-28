@@ -1,6 +1,6 @@
 SinarUltrafeng_UltraSales
 
-a website tailored for SMEs, enabling seamless recording and tracking of sales. Integrated with Google Workspace, our platform empowers businesses to gain invaluable data insights, optimizing their sales processes effectively
+A website tailored for SMEs, enabling seamless recording and tracking of sales. Integrated with Google Workspace, our platform empowers businesses to gain invaluable data insights, optimizing their sales processes effectively
 
 Speadsheet link
 
