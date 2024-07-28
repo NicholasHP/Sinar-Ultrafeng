@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <title>Contacts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+    }
+    
+    .search-container {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .search-container input {
+      width: 50%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-container-contacts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .card-contact {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    
+    .card-contact:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .card-contact img {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin: 0 auto;
+    }
+    
+    .card-contact h3 {
+      margin: 10px 0 5px;
+      color: #333;
+    }
+    
+    .card-contact p {
+      margin: 5px 0;
+      color: #666;
+    }
+    
+    .card-contact strong {
+      display: block;
+      margin-top: 10px;
+      color: #000;
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+ 
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+
+      .notification {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-size: 16px;
+    }
+
+    /* Button styles */
+.save-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.save-button:hover {
+  background-color: #45a049;
+}
+
+.delete-button {
+  background-color: #f44336; /* Red */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+  </style>
+  <!-- INCLUDE REQUIRED EXTERNAL JAVASCRIPT LIBRARIES -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script>
+    // Fetch the data and call the showCards function
+    google.script.run.withSuccessHandler(data => {
+      window.contactsDataArray = data;
+      showContactCards(data);
+    }).getContactsData();
+
+    // Function to display contact data as cards
+    function showContactCards(contactsDataArray) {
+      const container = document.getElementById('contactCardContainer');
+      container.innerHTML = ''; // Clear any existing cards
+
+      // Create cards for each data entry
+      contactsDataArray.forEach((data, index) => {
+        const card = document.createElement('div');
+        card.className = 'card-contact';
+        card.dataset.index = index;
+        
+        const img = document.createElement('img');
+        img.src = 'https://via.placeholder.com/100'; // Placeholder image URL
+        img.alt = data[2] || 'No Name'; // Name as alt text
+        card.appendChild(img);
+
+        const name = document.createElement('h3');
+        name.textContent = data[2] || 'No Name'; // Name
+        card.appendChild(name);
+
+        const contactId = document.createElement('p');
+        contactId.textContent = 'Contact ID: ' + (data[0] || 'N/A');
+        card.appendChild(contactId);
+
+        const companyId = document.createElement('p');
+        companyId.textContent = 'Company ID: ' + (data[1] || 'N/A');
+        card.appendChild(companyId);
+
+        const role = document.createElement('p');
+        role.textContent = 'Role: ' + (data[3] || 'N/A');
+        card.appendChild(role);
+
+        const phoneNumber = document.createElement('p');
+        phoneNumber.textContent = 'Phone Number: ' + (data[4] || 'N/A');
+        card.appendChild(phoneNumber);
+
+        const email = document.createElement('p');
+        email.textContent = 'Email: ' + (data[5] || 'N/A');
+        card.appendChild(email);
+
+        // Add click event to card to open the modal and populate the form
+        card.addEventListener('click', () => {
+          openEditModal(data, index);
+        });
+
+        // Append card to container
+        container.appendChild(card);
+      });
+    }
+
+    // Function to filter contact cards based on search query
+    function searchContactCards() {
+      const query = document.getElementById('contactsSearchBar').value.toLowerCase();
+      const filteredData = window.contactsDataArray.filter(data => 
+        data[2].toLowerCase().includes(query)           // Name
+      );
+      showContactCards(filteredData);
+    }
+
+    // Function to open the edit modal and populate the form
+    function openEditModal(data, index) {
+      document.getElementById('modalContactId').value = data[0];
+      document.getElementById('modalCompanyId').value = data[1];
+      document.getElementById('modalName').value = data[2];
+      document.getElementById('modalRole').value = data[3];
+      document.getElementById('modalPhoneNumber').value = data[4];
+      document.getElementById('modalEmail').value = data[5];
+      document.getElementById('modalIndex').value = index;
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    // Function to close the edit modal
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    // Function to save the edited data
+   function saveContactData() {
+  const index = document.getElementById('modalIndex').value;
+  const updatedData = [
+    window.contactsDataArray[index][0], // contactID (unchanged)
+    window.contactsDataArray[index][1], // companyID (unchanged)
+    document.getElementById('modalName').value,
+    document.getElementById('modalRole').value,
+    document.getElementById('modalPhoneNumber').value,
+    document.getElementById('modalEmail').value
+  ];
+  window.contactsDataArray[index] = updatedData;
+
+  const startRow = parseInt(index) + 2; // Adjust starting row based on your data index
+  const endRow = parseInt(index) + 2; // Adjust ending row based on your data index
+
+  google.script.run.withSuccessHandler(response => {
+    console.log('Data updated successfully:', response);
+    showNotification('Contact updated successfully!');
+  }).updateData([updatedData], startRow, endRow, 'contacts');
+  closeEditModal();
+  showContactCards(window.contactsDataArray);
+}
+
+
+function showNotification(message) {
+  const notification = document.getElementById('notification');
+  notification.textContent = message;
+  notification.style.display = 'block';
+
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 5000); // Hide notification after 5 seconds
+}
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+  function confirmDeleteContact() {
+    Swal.fire({
+      title: 'Are you sure you want to delete this contact?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const contactId = document.getElementById('modalContactId').value;
+        const sheetName = 'contacts'; // Replace with your actual sheet name
+        google.script.run.withSuccessHandler(() => {
+          showNotification('Contact deleted successfully!');
+          // Refresh the contact cards
+          google.script.run.withSuccessHandler(showContactCards).getContactsData();
+          closeEditModal();
+        }).deleteData(contactId, sheetName);
+      }
+    });
+  }
+
+//   // Function to close the modal
+// function closeContactsEditModal() {
+//   const modal = document.getElementById('editModal');
+//   modal.style.display = 'none';
+// }
+
+//   // Ensure close modal on clicking outside the modal content
+// window.onclick = function (event) {
+//   const modal = document.getElementById('editModal');
+//   if (event.target == modal) {
+//     closeContactsEditModal();
+    
+//   }
+// }
+
+  // Function to close the deals modal
+    function closeDealsEditModal() {
+      const modal = document.getElementById('dealModal');
+      modal.style.display = 'none';
+    }
+
+    // Function to close the contacts modal
+    function closeContactsEditModal() {
+      const modal = document.getElementById('editModal');
+      modal.style.display = 'none';
+    }
+
+    // Consolidated function for closing modals
+    window.onclick = function (event) {
+      const dealModal = document.getElementById('dealModal');
+      const contactsModal = document.getElementById('editModal');
+      
+      if (event.target == dealModal) {
+        closeDealsEditModal();
+      } else if (event.target == contactsModal) {
+        closeContactsEditModal();
+      }
+    }
+</script>
+
+</head>
+
+<body>
+  <h1>Contacts</h1>
+  <div id="notification" class="notification">Contact updated successfully!</div>
+  <div class="search-container">
+    <input type="text" id="contactsSearchBar" placeholder="Search contacts by name..." onkeyup="searchContactCards()">
+  </div>
+  <div class="card-container-contacts" id="contactCardContainer">
+    <!-- Cards will be dynamically inserted here -->
+  </div>
+
+  <!-- The Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditModal()">&times;</span>
+      <h2>Edit Contact</h2>
+      <form class="modal-form">
+        <input type="hidden" id="modalIndex">
+        <label for="modalContactId">Contact ID</label>
+        <input type="text" id="modalContactId" disabled>
+        <label for="modalCompanyId">Company ID</label>
+        <input type="text" id="modalCompanyId" disabled>
+        <label for="modalName">Name</label>
+        <input type="text" id="modalName">
+        <label for="modalRole">Role</label>
+        <input type="text" id="modalRole">
+        <label for="modalPhoneNumber">Phone Number</label>
+        <input type="text" id="modalPhoneNumber">
+        <label for="modalEmail">Email</label>
+        <input type="text" id="modalEmail">
+ <button type="button" class="save-button" onclick="saveContactData()">Save</button>
+<button type="button" class="delete-button" onclick="confirmDeleteContact()">Delete</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>
